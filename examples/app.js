@@ -7,22 +7,11 @@ var {Rectangle, Group, Mask, Text, Sprite} = Elements;
 var App = DRL.createClass({
   render: function() {
     return (
-      <Sprite path='clouds.jpg' x={0} y={0} w={600} h={600}>
-        {
-          this.props.ships.map(function(ship){
-            return (
-              <Ship {...ship} >
-                <Rectangle color={[0, 1, 1, 1]} x={-15} y={0} w={30} h={25} />
-              </Ship>
-            );
-          })
-        }
-        {
-          this.props.rockets.map(function(rocket){
-            return <Rectangle color={[1, 0, 0, 1]} {...rocket} w={50} h={25} />
-          })
-        }
-      </Sprite>
+      <Group x={0} y={0}>
+        <Sprite path='cat.jpeg' x={50} y={100} />
+        <Sprite path='cat.jpeg' x={51} y={201} />
+        <Sprite path='cat.jpeg' x={52} y={302} />
+      </Group>
     );
   }
 });

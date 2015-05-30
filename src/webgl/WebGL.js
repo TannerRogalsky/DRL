@@ -82,6 +82,56 @@ class WebGL {
     this.transformMatrices.pop();
   }
 
+  bufferImages(count) {
+    this.bufferIndex = 0;
+    this.uvsBuffer = new Float32Array(12 * count);
+    this.coordsBuffer = new Float32Array(12 * count);
+    this.indexesBuffer = new Uint16Array(6 * count);
+  }
+
+  bufferImage(imageData, x, y, angle, sx, sy, ox, oy, kx, ky) {
+    this.bindTexture(imageData.texture);
+
+    for (var i = 0; i < imageData.uvs.length; i++) {
+      this.uvsBuffer[this.bufferIndex * 12 + i] = imageData.uvs[i];
+    }
+
+    for (var i = 0; i < imageData.coords.length; i += 2) {
+      this.coordsBuffer[this.bufferIndex * 12 + i] = imageData.coords[i] + x;
+      this.coordsBuffer[this.bufferIndex * 12 + i + 1] = imageData.coords[i + 1] + y;
+    }
+
+    for (var i = 0; i < imageData.indices.length; i++) {
+      this.indexesBuffer[this.bufferIndex * 6 + i] = imageData.indices[i] + (this.bufferIndex * 6);
+    }
+
+    this.bufferIndex++;
+  }
+
+  flushImageBuffer(){
+    this.prepareDraw();
+
+    var gl = this.context;
+    gl.enableVertexAttribArray(this.positionLocation);
+    gl.enableVertexAttribArray(this.texCoordLocation);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indexesBuffer, gl.DYNAMIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.uvsBuffer, gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(this.texCoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.coordsBuffer, gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    gl.drawElements(gl.TRIANGLES, 2 * 3 * this.bufferIndex, gl.UNSIGNED_SHORT, 0);
+
+    gl.disableVertexAttribArray(this.positionLocation);
+    gl.disableVertexAttribArray(this.texCoordLocation);
+  }
+
   polygon(points) {
     this.prepareDraw();
 

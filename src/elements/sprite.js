@@ -27,7 +27,7 @@ var Sprite = DRL.createClass({
     var kx = this.props.kx;
     var ky = this.props.ky;
 
-    gl.drawImage(imageData, x, y, angle, sx, sy, ox, oy, kx, ky);
+    gl.bufferImage(imageData, x, y, angle, sx, sy, ox, oy, kx, ky);
   },
 
   render: function() {

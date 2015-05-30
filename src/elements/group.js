@@ -15,9 +15,13 @@ var Group = DRL.createClass({
   setup: function(gl) {
     gl.push();
     gl.transform(this.props.x, this.props.y, 0, this.props.sx, this.props.sy, 0, 0, this.props.kx, this.props.ky);
+
+    gl.bufferImages(this.children.length);
   },
 
   teardown: function(gl) {
+    gl.flushImageBuffer();
+
     gl.pop();
   },
 
