@@ -40,9 +40,9 @@ class WebGL {
     this.context.clearColor(0, 0, 0, 1);
     this.setColor(1, 1, 1, 1);
 
-    this.texCoordBuffer = this.context.createBuffer();
-    this.positionBuffer = this.context.createBuffer();
-    this.indicesBuffer = this.context.createBuffer();
+    this.glUVBuffer = this.context.createBuffer();
+    this.glCoordinatesBuffer = this.context.createBuffer();
+    this.glIndicesBuffer = this.context.createBuffer();
 
     this.defaultTexture = createDefaultTexture(this.context);
   }
@@ -63,14 +63,14 @@ class WebGL {
     gl.enableVertexAttribArray(this.positionLocation);
     gl.enableVertexAttribArray(this.texCoordLocation);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.glIndicesBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, imageData.indices, gl.DYNAMIC_DRAW);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.glUVBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, imageData.uvs, gl.DYNAMIC_DRAW);
     gl.vertexAttribPointer(this.texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.glCoordinatesBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, imageData.coords, gl.DYNAMIC_DRAW);
     gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
 
@@ -84,16 +84,16 @@ class WebGL {
 
   bufferImages(count) {
     this.bufferIndex = 0;
-    this.uvsBuffer = new Float32Array(12 * count);
+    this.uvBuffer = new Float32Array(12 * count);
     this.coordsBuffer = new Float32Array(12 * count);
-    this.indexesBuffer = new Uint16Array(6 * count);
+    this.indicesBuffer = new Uint16Array(6 * count);
   }
 
   bufferImage(imageData, x, y, angle, sx, sy, ox, oy, kx, ky) {
     this.bindTexture(imageData.texture);
 
     for (var i = 0; i < imageData.uvs.length; i++) {
-      this.uvsBuffer[this.bufferIndex * 12 + i] = imageData.uvs[i];
+      this.uvBuffer[this.bufferIndex * 12 + i] = imageData.uvs[i];
     }
 
     for (var i = 0; i < imageData.coords.length; i += 2) {
@@ -102,7 +102,7 @@ class WebGL {
     }
 
     for (var i = 0; i < imageData.indices.length; i++) {
-      this.indexesBuffer[this.bufferIndex * 6 + i] = imageData.indices[i] + (this.bufferIndex * 6);
+      this.indicesBuffer[this.bufferIndex * 6 + i] = imageData.indices[i] + (this.bufferIndex * 6);
     }
 
     this.bufferIndex++;
@@ -115,14 +115,14 @@ class WebGL {
     gl.enableVertexAttribArray(this.positionLocation);
     gl.enableVertexAttribArray(this.texCoordLocation);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indexesBuffer, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.glIndicesBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer, gl.DYNAMIC_DRAW);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.uvsBuffer, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.glUVBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.uvBuffer, gl.DYNAMIC_DRAW);
     gl.vertexAttribPointer(this.texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.glCoordinatesBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.coordsBuffer, gl.DYNAMIC_DRAW);
     gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
 
@@ -137,7 +137,7 @@ class WebGL {
 
     this.bindTexture(this.defaultTexture);
 
-    this.context.bindBuffer(this.context.ARRAY_BUFFER, this.positionBuffer);
+    this.context.bindBuffer(this.context.ARRAY_BUFFER, this.glCoordinatesBuffer);
     this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(points), this.context.DYNAMIC_DRAW);
     this.context.enableVertexAttribArray(this.positionLocation);
     this.context.vertexAttribPointer(this.positionLocation, 2, this.context.FLOAT, false, 0, 0);
